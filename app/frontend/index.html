@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>ExpenseGuard Dashboard</title>
+
+<style>
+
+body{
+font-family:Segoe UI;
+margin:0;
+background:linear-gradient(to right,#0f2027,#203a43,#2c5364);
+color:white;
+}
+
+.container{
+padding:30px;
+margin-left:200px;
+}
+
+.sidebar{
+
+position:fixed;
+left:0;
+top:0;
+height:100%;
+width:180px;
+background:#081c24;
+padding-top:30px;
+}
+
+.sidebar button{
+
+display:block;
+width:140px;
+margin:10px auto;
+padding:12px;
+border:none;
+border-radius:8px;
+background:#1f6feb;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+.sidebar button:hover{
+background:#388bfd;
+}
+
+.card{
+
+display:inline-block;
+background:rgba(255,255,255,0.1);
+padding:20px;
+margin:10px;
+border-radius:10px;
+width:200px;
+}
+
+input,select{
+
+padding:10px;
+margin:10px;
+border-radius:5px;
+border:none;
+width:150px;
+}
+
+button.add{
+
+padding:10px 20px;
+background:#1f6feb;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+table{
+
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+
+td,th{
+
+padding:10px;
+border-bottom:1px solid gray;
+text-align:center;
+}
+
+.safe{
+color:#4CAF50;
+font-weight:bold;
+}
+
+.fraud{
+color:red;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<button onclick="location.reload()">
+Dashboard
+</button>
+
+<button onclick="logout()">
+Logout
+</button>
+
+</div>
+
+
+<div class="container">
+
+<h1>
+ExpenseGuard Dashboard
+</h1>
+
+
+<div>
+
+<div class="card">
+<h2 id="total">0</h2>
+Total
+</div>
+
+<div class="card">
+<h2 id="fraud">0</h2>
+Fraud
+</div>
+
+<div class="card">
+<h2 id="safe">0</h2>
+Safe
+</div>
+
+</div>
+
+
+<h2>Add Expense</h2>
+
+<input id="name" placeholder="Employee Name">
+
+<input id="amount" placeholder="Amount">
+
+<select id="category">
+
+<option>Food</option>
+<option>Travel</option>
+<option>Hotel</option>
+<option>Shopping</option>
+
+</select>
+
+
+<button class="add" onclick="addExpense()">
+Add Expense
+</button>
+
+
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Name</th>
+<th>Amount</th>
+<th>Category</th>
+<th>Score</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody id="table">
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<script>
+
+const API="http://127.0.0.1:8000"
+
+
+
+function logout(){
+
+location.href="login.html"
+
+}
+
+
+
+
+async function load(){
+
+const res=await fetch(API+"/expenses")
+
+const data=await res.json()
+
+let table=""
+
+let total=0
+let fraud=0
+let safe=0
+
+
+data.forEach(e=>{
+
+total++
+
+if(e.status=="Fraud") fraud++
+else safe++
+
+
+table+=`
+
+<tr>
+
+<td>${e.id}</td>
+
+<td>${e.name}</td>
+
+<td>${e.amount}</td>
+
+<td>${e.category}</td>
+
+<td>${e.score}</td>
+
+<td class="${e.status=='Fraud'?'fraud':'safe'}">
+
+${e.status}
+
+</td>
+
+</tr>
+
+`
+
+})
+
+
+document.getElementById("table").innerHTML=table
+
+document.getElementById("total").innerText=total
+
+document.getElementById("fraud").innerText=fraud
+
+document.getElementById("safe").innerText=safe
+
+}
+
+
+
+async function addExpense(){
+
+const name=document.getElementById("name").value
+
+const amount=document.getElementById("amount").value
+
+const category=document.getElementById("category").value
+
+
+
+await fetch(API+"/add_expense",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+name:name,
+amount:parseInt(amount),
+category:category
+
+})
+
+})
+
+
+load()
+
+}
+
+
+
+load()
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>ExpenseGuard Admin</title>
+
+<style>
+
+body{
+
+font-family:Segoe UI;
+margin:0;
+background:linear-gradient(to right,#0f2027,#203a43,#2c5364);
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+
+}
+
+
+.card{
+
+background:rgba(255,255,255,0.08);
+padding:40px;
+border-radius:12px;
+width:500px;
+
+}
+
+
+h1{
+
+margin-bottom:20px;
+
+}
+
+
+input{
+
+padding:12px;
+margin:10px;
+width:180px;
+border-radius:6px;
+border:none;
+
+}
+
+
+button{
+
+padding:12px 18px;
+margin:10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-size:14px;
+
+}
+
+
+.add{
+
+background:#1f6feb;
+color:white;
+
+}
+
+.add:hover{
+
+background:#388bfd;
+
+}
+
+
+.logout{
+
+background:#d73a49;
+color:white;
+
+}
+
+
+.continue{
+
+background:#238636;
+color:white;
+
+}
+
+
+ul{
+
+margin-top:20px;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="card">
+
+<h1>
+Admin Panel
+</h1>
+
+
+<button class="logout" onclick="logout()">
+Logout
+</button>
+
+
+<button class="continue" onclick="continueDashboard()">
+Continue to Dashboard
+</button>
+
+
+
+<h2>Add Employee</h2>
+
+
+<input id="username" placeholder="Employee username">
+
+<input id="password" placeholder="Employee password">
+
+
+<button class="add" onclick="addEmployee()">
+Add Employee
+</button>
+
+
+
+<h3>Employee List</h3>
+
+
+<ul id="list">
+
+</ul>
+
+
+
+</div>
+
+
+
+<script>
+
+const API="http://127.0.0.1:8000"
+
+
+
+function logout(){
+
+location.href="login.html"
+
+}
+
+
+
+function continueDashboard(){
+
+location.href="index.html"
+
+}
+
+
+
+async function loadEmployees(){
+
+const res=await fetch(API+"/employees")
+
+const data=await res.json()
+
+let html=""
+
+data.forEach(e=>{
+
+html+=`<li>${e.username}</li>`
+
+})
+
+document.getElementById("list").innerHTML=html
+
+}
+
+
+
+async function addEmployee(){
+
+const username=document.getElementById("username").value
+
+const password=document.getElementById("password").value
+
+
+
+await fetch(API+"/add_employee",{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+username:username,
+password:password
+
+})
+
+})
+
+
+loadEmployees()
+
+}
+
+
+
+loadEmployees()
+
+</script>
+
+
+</body>
+
+</html>

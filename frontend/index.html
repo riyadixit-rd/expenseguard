@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>ExpenseGuard Elite Dashboard</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+body {
+
+background-color: #0f172a;
+color: white;
+
+}
+
+.card {
+
+background-color: #1e293b;
+border-radius: 10px;
+
+}
+
+.title {
+
+font-size: 42px;
+font-weight: bold;
+
+}
+
+.subtitle {
+
+color: gray;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container mt-5">
+
+
+<h1 class="title">ExpenseGuard</h1>
+
+<p class="subtitle">Enterprise Fraud Detection Dashboard</p>
+
+
+<div class="row mt-4">
+
+
+<div class="col-md-4">
+
+<div class="card p-3">
+
+<h2 id="total">0</h2>
+
+<p>Total Expenses</p>
+
+</div>
+
+</div>
+
+
+<div class="col-md-4">
+
+<div class="card p-3">
+
+<h2 id="fraud">0</h2>
+
+<p>Total Fraud</p>
+
+</div>
+
+</div>
+
+
+<div class="col-md-4">
+
+<div class="card p-3">
+
+<h2 id="normal">0</h2>
+
+<p>Normal Expenses</p>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<!-- Expense Table -->
+
+<table class="table table-dark table-striped mt-5">
+
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Employee</th>
+<th>Amount</th>
+<th>Category</th>
+<th>Fraud Score</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="table">
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+<script>
+
+
+fetch("http://127.0.0.1:8000/expenses")
+
+.then(response => response.json())
+
+.then(data => {
+
+
+document.getElementById("total").innerText = data.length;
+
+
+let fraud = data.filter(e => e.status == "Fraud").length;
+
+document.getElementById("fraud").innerText = fraud;
+
+
+document.getElementById("normal").innerText = data.length - fraud;
+
+
+
+let table = document.getElementById("table");
+
+
+data.forEach(e => {
+
+
+let color = e.status == "Fraud" ? "red" : "lightgreen";
+
+
+table.innerHTML += `
+
+<tr>
+
+<td>${e.id}</td>
+
+<td>${e.employee_name}</td>
+
+<td>${e.amount}</td>
+
+<td>${e.category}</td>
+
+<td>${e.fraud_score}</td>
+
+<td style="color:${color}">${e.status}</td>
+
+</tr>
+
+`;
+
+
+});
+
+
+});
+
+
+</script>
+
+
+</body>
+
+</html>
