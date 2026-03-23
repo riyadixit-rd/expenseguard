@@ -96,25 +96,33 @@ function goDashboard(){
     window.location.href = "dashboard.html";
 }
 
-// 🔥 ONLY FIXED PART
+// ✅ FIXED FUNCTION ONLY
 async function addEmployee(){
 
     let name = document.getElementById("name").value;
     let salary = document.getElementById("salary").value;
 
-    await fetch(API + "/add_expense", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            name: name,
-            amount: salary,
-            category: "Admin"
-        })
-    });
+    try {
+        let res = await fetch(API + "/add_expense", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: name,
+                amount: salary,
+                category: "Admin"
+            })
+        });
 
-    alert("Employee Added");
+        let data = await res.json();
+
+        alert("Employee Added Successfully");
+
+    } catch (error) {
+        alert("Error adding employee");
+        console.log(error);
+    }
 
 }
 
