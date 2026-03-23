@@ -69,7 +69,7 @@ expenseguard/
 
 ## 🌐 Live Demo
 
-- Frontend: neon-genie-4296fd.netlify.app
+- Frontend: [neon-genie-4296fd.netlify.app](https://neon-genie-4296fd.netlify.app/)
 - Backend API: https://expenseguard-api.onrender.com  
 
 ---
