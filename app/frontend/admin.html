@@ -2,235 +2,122 @@
 <html>
 
 <head>
-
-<title>ExpenseGuard Admin</title>
+<title>Admin Panel</title>
 
 <style>
-
-body{
-
-font-family:Segoe UI;
-margin:0;
-background:linear-gradient(to right,#0f2027,#203a43,#2c5364);
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-
+body {
+    margin: 0;
+    font-family: Arial;
+    background: linear-gradient(135deg,#0f172a,#2c5364);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: white;
 }
 
-
-.card{
-
-background:rgba(255,255,255,0.08);
-padding:40px;
-border-radius:12px;
-width:500px;
-
+.card {
+    background: rgba(255,255,255,0.1);
+    padding: 40px;
+    border-radius: 12px;
+    width: 500px;
 }
 
-
-h1{
-
-margin-bottom:20px;
-
+input {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    margin-right: 10px;
+    width: 200px;
 }
 
-
-input{
-
-padding:12px;
-margin:10px;
-width:180px;
-border-radius:6px;
-border:none;
-
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
-
-button{
-
-padding:12px 18px;
-margin:10px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-font-size:14px;
-
+.logout {
+    background: red;
+    color: white;
 }
 
-
-.add{
-
-background:#1f6feb;
-color:white;
-
+.dashboard {
+    background: green;
+    color: white;
 }
 
-.add:hover{
-
-background:#388bfd;
-
+.add {
+    background: #3b82f6;
+    color: white;
+    margin-top: 10px;
 }
-
-
-.logout{
-
-background:#d73a49;
-color:white;
-
-}
-
-
-.continue{
-
-background:#238636;
-color:white;
-
-}
-
-
-ul{
-
-margin-top:20px;
-
-}
-
 </style>
 
 </head>
 
-
 <body>
-
 
 <div class="card">
 
-<h1>
-Admin Panel
-</h1>
+<h1>Admin Panel</h1>
 
-
-<button class="logout" onclick="logout()">
-Logout
-</button>
-
-
-<button class="continue" onclick="continueDashboard()">
-Continue to Dashboard
-</button>
-
-
+<button class="logout" onclick="logout()">Logout</button>
+<button class="dashboard" onclick="goDashboard()">Continue to Dashboard</button>
 
 <h2>Add Employee</h2>
 
+<input id="name" placeholder="Employee Name">
+<input id="salary" placeholder="Salary">
 
-<input id="username" placeholder="Employee username">
+<br><br>
 
-<input id="password" placeholder="Employee password">
-
-
-<button class="add" onclick="addEmployee()">
-Add Employee
-</button>
-
-
+<button class="add" onclick="addEmployee()">Add Employee</button>
 
 <h3>Employee List</h3>
 
-
-<ul id="list">
-
-</ul>
-
-
+<ul id="list"></ul>
 
 </div>
 
-
-
 <script>
 
-const API="https://expenseguard-api.onrender.com"
+const API = "https://expenseguard-api.onrender.com";
 
-
-
+// logout
 function logout(){
-
-location.href="login.html"
-
+    localStorage.clear();
+    window.location.href = "index.html";
 }
 
-
-
-function continueDashboard(){
-
-location.href="index.html"
-
+// go dashboard
+function goDashboard(){
+    window.location.href = "dashboard.html";
 }
 
-
-
-async function loadEmployees(){
-
-const res=await fetch(API+"/employees")
-
-const data=await res.json()
-
-let html=""
-
-data.forEach(e=>{
-
-html+=`<li>${e.username}</li>`
-
-})
-
-document.getElementById("list").innerHTML=html
-
-}
-
-
-
+// 🔥 FIXED FUNCTION
 async function addEmployee(){
 
-const username=document.getElementById("username").value
+    let name = document.getElementById("name").value;
+    let salary = document.getElementById("salary").value;
 
-const password=document.getElementById("password").value
+    await fetch(API + "/add_employee", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: name,
+            salary: salary
+        })
+    });
 
-
-
-await fetch(API+"/add_employee",{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:JSON.stringify({
-
-username:username,
-password:password
-
-})
-
-})
-
-
-loadEmployees()
+    alert("Employee Added");
 
 }
-
-
-
-loadEmployees()
 
 </script>
 
-
 </body>
-
 </html>
