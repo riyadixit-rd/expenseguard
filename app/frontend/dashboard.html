@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <title>ExpenseGuard Dashboard</title>
 
@@ -13,10 +14,6 @@ body {
 
 .container {
     padding: 30px;
-}
-
-h1 {
-    margin-bottom: 5px;
 }
 
 .cards {
@@ -60,22 +57,13 @@ th, td {
     text-align: left;
 }
 
-.safe {
-    color: lightgreen;
-}
-
-.fraud {
-    color: red;
-}
+.safe { color: lightgreen; }
+.fraud { color: red; }
 
 .topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.logout {
-    background: red;
 }
 </style>
 
@@ -86,13 +74,11 @@ th, td {
 <div class="container">
 
 <div class="topbar">
-    <div>
-        <h1>ExpenseGuard</h1>
-        <p>Enterprise Fraud Detection Dashboard</p>
-    </div>
-
-    <button class="logout" onclick="logout()">Logout</button>
+    <h1>ExpenseGuard Dashboard</h1>
+    <button onclick="logout()">Logout</button>
 </div>
+
+<h3>Welcome <span id="user"></span></h3>
 
 <div class="cards">
     <div class="card">
@@ -102,42 +88,41 @@ th, td {
 
     <div class="card">
         <h2 id="fraud">0</h2>
-        <p>Total Fraud</p>
+        <p>Fraud</p>
     </div>
 
     <div class="card">
         <h2 id="safe">0</h2>
-        <p>Normal Expenses</p>
+        <p>Safe</p>
     </div>
 </div>
 
-<h2>Add Expense</h2>
+<h3>Add Expense</h3>
 
 <input id="name" placeholder="Employee Name">
-<input id="amount" placeholder="Amount" type="number">
+<input id="amount" type="number" placeholder="Amount">
 
 <select id="category">
     <option>Food</option>
     <option>Travel</option>
     <option>Hotel</option>
-    <option>Shopping</option>
 </select>
 
 <button onclick="addExpense()">Add Expense</button>
 
 <table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Employee</th>
-            <th>Amount</th>
-            <th>Category</th>
-            <th>Fraud Score</th>
-            <th>Status</th>
-        </tr>
-    </thead>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Amount</th>
+<th>Category</th>
+<th>Score</th>
+<th>Status</th>
+</tr>
+</thead>
 
-    <tbody id="table"></tbody>
+<tbody id="table"></tbody>
 </table>
 
 </div>
@@ -146,78 +131,81 @@ th, td {
 
 const API = "https://expenseguard-api.onrender.com";
 
-// ================= LOAD DATA =================
+// show username
+document.getElementById("user").innerText =
+localStorage.getItem("user");
 
+// logout
+function logout(){
+localStorage.clear();
+window.location.href = "index.html";
+}
+
+// load data
 async function loadData(){
 
-    let res = await fetch(API + "/expenses");
-    let data = await res.json();
+let res = await fetch(API + "/expenses");
+let data = await res.json();
 
-    let table = document.getElementById("table");
-    table.innerHTML = "";
+let table = document.getElementById("table");
+table.innerHTML = "";
 
-    let total = 0, fraud = 0, safe = 0;
+let total = 0, fraud = 0, safe = 0;
 
-    data.forEach(exp => {
+data.forEach(exp => {
 
-        total++;
+total++;
 
-        if(exp.status === "Fraud") fraud++;
-        else safe++;
+if(exp.status === "Fraud") fraud++;
+else safe++;
 
-        let row = document.createElement("tr");
+let row = document.createElement("tr");
 
-        row.innerHTML = `
-        <td>${exp.id}</td>
-        <td>${exp.name}</td>
-        <td>${exp.amount}</td>
-        <td>${exp.category}</td>
-        <td>${exp.score}</td>
-        <td class="${exp.status === 'Fraud' ? 'fraud' : 'safe'}">
-            ${exp.status}
-        </td>
-        `;
+row.innerHTML = `
+<td>${exp.id}</td>
+<td>${exp.name}</td>
+<td>${exp.amount}</td>
+<td>${exp.category}</td>
+<td>${exp.score}</td>
+<td class="${exp.status === 'Fraud' ? 'fraud' : 'safe'}">
+${exp.status}
+</td>
+`;
 
-        table.appendChild(row);
-    });
+table.appendChild(row);
 
-    document.getElementById("total").innerText = total;
-    document.getElementById("fraud").innerText = fraud;
-    document.getElementById("safe").innerText = safe;
+});
+
+document.getElementById("total").innerText = total;
+document.getElementById("fraud").innerText = fraud;
+document.getElementById("safe").innerText = safe;
+
 }
 
-// ================= ADD EXPENSE =================
-
+// add expense
 async function addExpense(){
 
-    let name = document.getElementById("name").value;
-    let amount = document.getElementById("amount").value;
-    let category = document.getElementById("category").value;
+let name = document.getElementById("name").value;
+let amount = document.getElementById("amount").value;
+let category = document.getElementById("category").value;
 
-    await fetch(API + "/add_expense", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            name: name,
-            amount: amount,
-            category: category
-        })
-    });
+await fetch(API + "/add_expense", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+name,
+amount,
+category
+})
+});
 
-    loadData();
+loadData();
+
 }
 
-// ================= LOGOUT =================
-
-function logout(){
-    localStorage.clear();
-    window.location.href = "login.html";
-}
-
-// ================= INIT =================
-
+// init
 loadData();
 
 </script>
