@@ -10,7 +10,7 @@ A full-stack web application that detects fraudulent expenses using rule-based l
 - 📊 Dashboard with real-time expense tracking
 - ⚠️ Fraud Detection based on expense amount
 - ➕ Add Expenses dynamically
-- 👨‍💼 Admin Panel to manage entries
+- 👨‍💼 Admin Panel to manage enteries
 - 🌐 Fully deployed (Frontend + Backend)
 
 ---
